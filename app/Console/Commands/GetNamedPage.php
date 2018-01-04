@@ -39,26 +39,7 @@ class GetNamedPage extends Command
      */
     public function handle()
     {
-        /*
-         * Product page URL
-        print QueryPath::withHTML('https://www.namedclothing.com/product-category/all-patterns/page/2/', '.product a')->attr('href');
-        //Alternatively
-        var_dump(QueryPath::withHTML('https://www.namedclothing.com/product-category/all-patterns/page/2/')->find('.product a')->attr('href'));
-        die();
-        */
-
-        /*
-        First product picture URL, but only for the first child... don't know why
-        print QueryPath::withHTML('https://www.namedclothing.com/product-category/all-patterns/page/2/', '.product a img')->attr('src');
-        die();
-        */
-
-        /* Creates a long string joining all text from product on the page corresponding to the path
-        print QueryPath::withHTML('https://www.namedclothing.com/product-category/all-patterns/page/2/', '.product')->text();
-        ///ALSO the below will select only the h3
-        print QueryPath::withHTML('https://www.namedclothing.com/product-category/all-patterns/page/2/', '.product h3')->text();
-        die();
-         */
+        
         function lastWord($string){
             $pieces = explode(' ', $string);
             $last_word = array_pop($pieces);
@@ -72,20 +53,44 @@ class GetNamedPage extends Command
         /// and a page that is non existent (ex: there is not "page 4" to Named patterns).
 
         $url = "https://www.namedclothing.com/product-category/all-patterns/page/2/";
-        $this->info("Importing data from ".$url);
+        $this->info("Scraping page ".$url."...");
 
-        $this->info("Importing names...");
+        $this->info("Scraping names...");
         $names = QueryPath::withHTML($url, '.product h3')->toArray();
 
-        $this->info("Importing prices...");
+        $this->info("Scraping prices...");
         $prices = QueryPath::withHTML($url, '.product .price')->toArray();
+
+        $this->info("Scraping redirect URLs...");
+        $urls = [];
+        foreach(QueryPath::withHTML('https://www.namedclothing.com/product-category/all-patterns/page/2/')->find('.product a') as $product){
+            $red_url = $product->attr('href');
+            $urls[] = $red_url;
+        };
+        // array saved in $urls variable ==> add it to db below
+
+        $this->info("Scraping images...");
+        $images = [];
+        foreach(QueryPath::withHTML('https://www.namedclothing.com/product-category/all-patterns/page/2/')->find('.product a img') as $product){
+            $img_url = $product->attr('src');
+            $images[] = $img_url;
+        };
+        // array saved into $images variable
 
         $this->info("Reorganizing data...");
         $data = [];
         foreach($names as $key => $value) {
-            $value2 = $prices[$key];
-            $value3 = lastWord($value->textContent);
-            $data[$key] = ['name' => $value->textContent, 'price' => $value2->textContent, 'category' => $value3];
+            $price = $prices[$key];
+            $category = lastWord($value->textContent);
+            $url = $urls[$key];
+            $image = $images[$key];
+            $data[$key] = [
+                'name' => $value->textContent,
+                'price' => $price->textContent,
+                'category' => $category,
+                'redirect_url' => $url,
+                'image_url' => $image,
+            ];
         }
 
         $this->info("Looping through data...");
