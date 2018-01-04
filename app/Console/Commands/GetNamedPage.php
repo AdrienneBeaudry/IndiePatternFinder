@@ -104,15 +104,16 @@ class GetNamedPage extends Command
 
             $this->info("Scraping company product ID...");
             $product_id = QueryPath::withHTML($pattern['redirect_url'])->find('form.cart')->attr('data-product_id');
-            $product_id = "1-".$product_id; // Adding company ID in front of company pattern ID to eliminate possible duplicates between different companies
+            $product_id = "1-".$product_id; // Adding company ID in front of company pattern ID to eliminate possible duplicates between companies
 
             $this->info("Scraping short description...");
+            // find a way to end up with a properly formatted pattern description. With correct punctuation and spacing.
 
             $data[$key] = [
                 'full_description' => $full_description,
                 //'description' => ,
                 'company_pattern_id' => $product_id,
-                //'format' => ,
+                //'format' => , // this is more complicated than expected for Named, due to the way the data is presented. Return to this later time permitting.
             ];
         }
 
