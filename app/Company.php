@@ -4,6 +4,12 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\Company
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Pattern[] $pattern
+ * @mixin \Eloquent
+ */
 class Company extends Model
 {
     public $incrementing = true;
