@@ -104,7 +104,8 @@ class GetNamedPage extends Command
 
             $this->info("Scraping company product ID...");
             $product_id = QueryPath::withHTML($pattern['redirect_url'])->find('form.cart')->attr('data-product_id');
-            $product_id = "1-".$product_id; // Adding company ID in front of company pattern ID to eliminate possible duplicates between companies
+            $product_id = "1-".$product_id; // Adding company ID in front of company pattern ID
+            // to eliminate possible duplicates between companies
 
             $this->info("Scraping short description...");
             // find a way to end up with a properly formatted pattern description. With correct punctuation and spacing.
@@ -113,15 +114,21 @@ class GetNamedPage extends Command
                 'full_description' => $full_description,
                 //'description' => ,
                 'company_pattern_id' => $product_id,
-                //'format' => , // this is more complicated than expected for Named, due to the way the data is presented. Return to this later time permitting.
+                //'format' => , // this is more complicated than expected for Named, due to specific DOM structure.
+                // Return to this later, time permitting.
             ];
         }
+        dd($data); //Fix this problem. My previous data has been replaced with only these two keys. Need to do some sort
+        // of array merge solution or move this loop within the previous loop...
 
         $this->info("Looping through data...");
         foreach($data as $item) {
             $this->info("Inserting/updating pattern with name: ". $item['name']);
             $item['company_id'] = '1';
-            $dbPattern = Pattern::findOrNew($item['name']);
+            //$item['id'] = $item['company_pattern_id'];
+            //Is find of New method correct below? Should be more UPDATE or CREATE if it is not there?
+            // Info subject to changing, which is the whole point of a scraper...
+            $dbPattern = Pattern::findOrNew($item['company_pattern_id']);
             $dbPattern->fill($item)->save();
         }
 
