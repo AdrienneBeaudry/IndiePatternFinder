@@ -66,12 +66,21 @@ class GetNamedPage extends Command
             return $last_word;
         }
 
+        /// Repeat the process for each page on Named, without knowing exactly how many pages
+        /// So build in a process that would check whether a page is existing, or is live
+        /// at the moment. Would need to check for header and status?
+        /// Bot would need to be able to distinguish between a page that is temporarily down
+        /// and a page that is non existent (ex: there is not "page 4" to Named patterns).
+
         $url = "https://www.namedclothing.com/product-category/all-patterns/page/2/";
         $this->info("Importing data from ".$url);
+
         $this->info("Importing names...");
         $names = QueryPath::withHTML($url, '.product h3')->toArray();
+
         $this->info("Importing prices...");
         $prices = QueryPath::withHTML($url, '.product .price')->toArray();
+
         $this->info("Reorganizing data...");
         $data = [];
         foreach($names as $key => $value) {
@@ -82,7 +91,6 @@ class GetNamedPage extends Command
         $this->info("Looping through data...");
         foreach($data as $item) {
             $this->info("Inserting/updating pattern with name". $item['name']);
-            // create pattern model, migrations, and all that jazz...
         }
     }
 

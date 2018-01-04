@@ -15,6 +15,15 @@ class CreatePatternsTable extends Migration
     {
         Schema::create('patterns', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('name');
+            $table->string('company_id');
+            $table->string('redirect_url');
+            $table->string('price')->nullable();
+            $table->string('size_type')->nullable();
+            $table->unsignedSmallInteger('format')->nullable();
+            $table->string('category')->nullable();
+            $table->string('image_url')->nullable();
+            $table->string('description', 1000)->nullable();
             $table->timestamps();
         });
     }
