@@ -18,12 +18,14 @@ class CreatePatternsTable extends Migration
             $table->string('name');
             $table->string('company_id');
             $table->string('redirect_url');
+            $table->string('company_product_id')->nullable();
             $table->string('price')->nullable();
             $table->string('size_type')->nullable();
-            $table->unsignedSmallInteger('format')->nullable();
+            $table->string('format')->nullable();
             $table->string('category')->nullable();
             $table->string('image_url')->nullable();
-            $table->string('description', 1000)->nullable();
+            $table->string('description', 3000)->nullable();
+            $table->string('full_description', 6000)->nullable();
             $table->timestamps();
         });
     }

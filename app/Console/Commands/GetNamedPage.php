@@ -6,6 +6,12 @@ use App\Pattern;
 use Illuminate\Console\Command;
 use QueryPath;
 
+// !!!!!WARNING!!!!
+//the below can be removed when done coding. This is to see the full content of long strings for debugging purposes
+ini_set("xdebug.var_display_max_children", -1);
+ini_set("xdebug.var_display_max_data", -1);
+ini_set("xdebug.var_display_max_depth", -1);
+
 class GetNamedPage extends Command
 {
     /**
@@ -39,7 +45,6 @@ class GetNamedPage extends Command
      */
     public function handle()
     {
-        
         function lastWord($string){
             $pieces = explode(' ', $string);
             $last_word = array_pop($pieces);
@@ -67,7 +72,6 @@ class GetNamedPage extends Command
             $red_url = $product->attr('href');
             $urls[] = $red_url;
         };
-        // array saved in $urls variable ==> add it to db below
 
         $this->info("Scraping images...");
         $images = [];
@@ -75,7 +79,6 @@ class GetNamedPage extends Command
             $img_url = $product->attr('src');
             $images[] = $img_url;
         };
-        // array saved into $images variable
 
         $this->info("Reorganizing data...");
         $data = [];
@@ -90,6 +93,26 @@ class GetNamedPage extends Command
                 'category' => $category,
                 'redirect_url' => $url,
                 'image_url' => $image,
+            ];
+        }
+
+        $this->info("Scraping individual product pages...");
+        foreach($data as $key => $pattern) {
+            $this->info("Scraping pattern description...");
+            $raw_description = QueryPath::withHTML($pattern['redirect_url'])->find('.span6')->first('p')->text();
+            $full_description =  preg_replace('/\s+/', ' ',$raw_description);
+
+            $this->info("Scraping company product ID...");
+            $product_id = QueryPath::withHTML($pattern['redirect_url'])->find('form.cart')->attr('data-product_id');
+            $product_id = "1-".$product_id; // Adding company ID in front of company pattern ID to eliminate duplicates
+
+            $this->info("Scraping short description...");
+
+            $data[$key] = [
+                'full_description' => $full_description,
+                //'description' => ,
+                'company_pattern_id' => $product_id,
+                //'format' => ,
             ];
         }
 
