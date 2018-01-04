@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Pattern;
 use Illuminate\Console\Command;
 use QueryPath;
 
@@ -38,8 +39,6 @@ class GetNamedPage extends Command
      */
     public function handle()
     {
-
-
         /*
          * Product page URL
         print QueryPath::withHTML('https://www.namedclothing.com/product-category/all-patterns/page/2/', '.product a')->attr('href');
@@ -88,11 +87,15 @@ class GetNamedPage extends Command
             $value3 = lastWord($value->textContent);
             $data[$key] = ['name' => $value->textContent, 'price' => $value2->textContent, 'category' => $value3];
         }
+
         $this->info("Looping through data...");
         foreach($data as $item) {
-            $this->info("Inserting/updating pattern with name". $item['name']);
+            $this->info("Inserting/updating pattern with name: ". $item['name']);
+            $item['company_id'] = '1';
+            $dbPattern = Pattern::findOrNew($item['name']);
+            $dbPattern->fill($item)->save();
         }
-    }
 
+    }
 
 }
