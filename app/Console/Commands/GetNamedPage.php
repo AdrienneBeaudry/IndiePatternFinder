@@ -41,26 +41,10 @@ class GetNamedPage extends Command
 
 
         /*
-         * NAMES OK
-        // getting all product name in an array
-        print_r(QueryPath::withHTML('https://www.namedclothing.com/product-category/all-patterns/page/2/', '.product h3')->toArray());
-        die();
-        */
-
-        /*
-         * PRICES OK
-         * Storing all prices in an array
-        print_r(QueryPath::withHTML('https://www.namedclothing.com/product-category/all-patterns/page/2/', '.product .price')->toArray());
-        die();
-        */
-
-
-        var_dump(QueryPath::withHTML('https://www.namedclothing.com/product-category/all-patterns/page/2/')->find('.product a')->attr());
-        die();
-
-        /*
          * Product page URL
         print QueryPath::withHTML('https://www.namedclothing.com/product-category/all-patterns/page/2/', '.product a')->attr('href');
+        //Alternatively
+        var_dump(QueryPath::withHTML('https://www.namedclothing.com/product-category/all-patterns/page/2/')->find('.product a')->attr('href'));
         die();
         */
 
@@ -76,26 +60,31 @@ class GetNamedPage extends Command
         print QueryPath::withHTML('https://www.namedclothing.com/product-category/all-patterns/page/2/', '.product h3')->text();
         die();
          */
+        function lastWord($string){
+            $pieces = explode(' ', $string);
+            $last_word = array_pop($pieces);
+            return $last_word;
+        }
 
-        $ch = curl_init();
         $url = "https://www.namedclothing.com/product-category/all-patterns/page/2/";
-        $this->info("Importing data from: ".$url);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_URL, $url);
-        $this->info("Sending request...");
-        $page = curl_exec($ch);
-        curl_close($ch);
-
-        //Parse the data to only get what I need:
-        //      - name
-        //      - category
-        //      - product images
-        //      - product description
-        //      - price
-        //      - format
-        //
-        // page saved into $page variable.... Now use something for
-        
+        $this->info("Importing data from ".$url);
+        $this->info("Importing names...");
+        $names = QueryPath::withHTML($url, '.product h3')->toArray();
+        $this->info("Importing prices...");
+        $prices = QueryPath::withHTML($url, '.product .price')->toArray();
+        $this->info("Reorganizing data...");
+        $data = [];
+        foreach($names as $key => $value) {
+            $value2 = $prices[$key];
+            $value3 = lastWord($value->textContent);
+            $data[$key] = ['name' => $value->textContent, 'price' => $value2->textContent, 'category' => $value3];
+        }
+        $this->info("Looping through data...");
+        foreach($data as $item) {
+            $this->info("Inserting/updating pattern with name". $item['name']);
+            // create pattern model, migrations, and all that jazz...
+        }
     }
+
+
 }
