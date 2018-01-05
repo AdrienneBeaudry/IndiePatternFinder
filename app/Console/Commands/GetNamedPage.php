@@ -95,11 +95,53 @@ class GetNamedPage extends Command
 
             $this->info("Scraping company product ID...");
             $product_id = QueryPath::withHTML($url)->find('form.cart')->attr('data-product_id');
-            $product_id = "1-".$product_id; // Adding company ID in front of company pattern ID
-            // to eliminate possible duplicates between companies
+            $product_id = "1-".$product_id; // Adds company ID in front of company pattern ID
 
             $this->info("Scraping short description...");
-            // find a way to end up with a properly formatted pattern description. With correct punctuation and spacing.
+            $description = QueryPath::withHTML($url, 'ul:nth(4)')->text();
+
+            $this->info("Scraping short supplies...");
+            $supplies = QueryPath::withHTML($url, 'ul:nth(6)')->text();
+
+            $this->info("Scraping format & language...");
+            $string = "";
+            foreach (QueryPath::withHTML($url, '#pa_pattern-type-and-language option') as $option) {
+                $format = $option->attr('value');
+                $string = $string . $format;
+            }
+
+            $this->info("Reading format...");
+            $format = null;
+            if(strpos($string, 'pdf') !== false && strpos($string, 'print') !== false ) {
+                $format = 3;
+            }
+            elseif(strpos($string, 'pdf') !== false) {
+                $format = 1;
+            }
+            elseif(strpos($string, 'print') !== false) {
+                $format = 2;
+            }
+
+            $this->info("Reading language...");
+            $language = "";
+            if(strpos($string, 'english') !== false) {
+                $language = $language . "English ";
+            }
+            if(strpos($string, 'finnish') !== false) {
+                $language = $language . "Finnish ";
+            }
+            if(strpos($string, 'french') !== false) {
+                $language = $language . "French ";
+            }
+            if(strpos($string, 'german') !== false) {
+                $language = $language . "German ";
+            }
+            if(strpos($string, 'japanese') !== false) {
+                $language = $language . "Japanese ";
+            }
+            if(strpos($string, 'spanish') !== false) {
+                $language = $language . "Spanish ";
+            }
 
             $data[$key] = [
                 'name' => $value->textContent,
@@ -107,13 +149,13 @@ class GetNamedPage extends Command
                 'category' => $category,
                 'redirect_url' => $url,
                 'image_url' => $image,
-                'full_description' => $full_description,
                 'company_pattern_id' => $product_id,
-                //'description' => ,
-                //'format' => , // more complicated than expected for Named, try maybe later.
+                'description' => $description,
+                'supplies' => $supplies,
+                'format' => $format,
+                'language' => $language,
+                'full_description' => $full_description,
             ];
-
-            dd($data);
         }
 
         $this->info("Looping through data...");
