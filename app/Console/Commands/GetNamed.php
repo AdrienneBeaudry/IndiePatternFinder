@@ -12,7 +12,7 @@ ini_set("xdebug.var_display_max_children", -1);
 ini_set("xdebug.var_display_max_data", -1);
 ini_set("xdebug.var_display_max_depth", -1);
 
-class GetNamedPage extends Command
+class GetNamed extends Command
 {
     /**
      * The name and signature of the console command.
@@ -50,14 +50,11 @@ class GetNamedPage extends Command
             $last_word = array_pop($pieces);
             return $last_word;
         }
+/*
+        function scrapeNamed($url) {
 
-        /// Repeat the process for each page on Named, without knowing exactly how many pages
-        /// So build in a process that would check whether a page is existing, or is live
-        /// at the moment. Would need to check for header and status?
-        /// Bot would need to be able to distinguish between a page that is temporarily down
-        /// and a page that is non existent (ex: there is not "page 4" to Named patterns).
-
-        $url = "https://www.namedclothing.com/product-category/all-patterns/page/2/";
+        }
+*/
         $this->info("Scraping page ".$url."...");
 
         $this->info("Scraping names...");
@@ -83,7 +80,7 @@ class GetNamedPage extends Command
         $this->info("Restructuring data & fetching info on individual product pages...");
         $data = [];
         foreach($names as $key => $value) {
-            $this->info("Now processing product ".strtoupper($value->textContent).".");
+            $this->info("Now processing product ===============> ".strtoupper($value->textContent));
             $price = $prices[$key];
             $category = lastWord($value->textContent);
             $url = $urls[$key];
@@ -160,14 +157,25 @@ class GetNamedPage extends Command
 
         $this->info("Looping through data...");
         foreach($data as $item) {
-            $this->info("Inserting/updating pattern with name: ". $item['name']);
+            $this->info("Inserting/updating: ". $item['name']);
             $item['company_id'] = '1';
-            //$item['id'] = $item['company_pattern_id'];
-            //Is find of New method correct below? Should be more UPDATE or CREATE if it is not there?
-            // Info subject to changing, which is the whole point of a scraper...
-            $dbPattern = Pattern::findOrNew($item['company_pattern_id']);
+            // is it okay to use the method findOrNew here??
+            $dbPattern = Pattern::findOrNew($item['name']);
             $dbPattern->fill($item)->save();
         }
+
+        /*
+
+        $i=1;
+        do {
+            $url = "https://www.namedclothing.com/product-category/all-patterns/" . $i;
+            scrapeNamed($url);
+            $i++;
+        }
+        while (get_headers($url)[0] == 'HTTP/1.1 200 OK');
+
+        */
+
 
     }
 

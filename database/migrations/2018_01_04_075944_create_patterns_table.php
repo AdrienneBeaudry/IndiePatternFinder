@@ -24,10 +24,10 @@ class CreatePatternsTable extends Migration
             $table->string('format')->nullable();
             $table->string('category')->nullable();
             $table->string('image_url')->nullable();
-            $table->string('description', 6000)->nullable();
-            $table->string('supplies', 6000)->nullable();
+            $table->string('description', 3000)->nullable();
+            $table->string('supplies', 3000)->nullable();
             $table->string('language')->nullable();
-            $table->string('full_description', 10000)->nullable();
+            $table->string('full_description', 3000)->nullable();
             $table->timestamps();
         });
     }
