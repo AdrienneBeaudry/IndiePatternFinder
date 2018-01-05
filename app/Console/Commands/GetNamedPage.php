@@ -80,30 +80,21 @@ class GetNamedPage extends Command
             $images[] = $img_url;
         };
 
-        $this->info("Reorganizing data...");
+        $this->info("Restructuring data & fetching info on individual product pages...");
         $data = [];
         foreach($names as $key => $value) {
+            $this->info("Now processing product ".strtoupper($value->textContent).".");
             $price = $prices[$key];
             $category = lastWord($value->textContent);
             $url = $urls[$key];
             $image = $images[$key];
-            $data[$key] = [
-                'name' => $value->textContent,
-                'price' => $price->textContent,
-                'category' => $category,
-                'redirect_url' => $url,
-                'image_url' => $image,
-            ];
-        }
 
-        $this->info("Scraping individual product pages...");
-        foreach($data as $key => $pattern) {
             $this->info("Scraping pattern description...");
-            $raw_description = QueryPath::withHTML($pattern['redirect_url'])->find('.span6')->first('p')->text();
+            $raw_description = QueryPath::withHTML($url)->find('.span6')->first('p')->text();
             $full_description =  preg_replace('/\s+/', ' ',$raw_description);
 
             $this->info("Scraping company product ID...");
-            $product_id = QueryPath::withHTML($pattern['redirect_url'])->find('form.cart')->attr('data-product_id');
+            $product_id = QueryPath::withHTML($url)->find('form.cart')->attr('data-product_id');
             $product_id = "1-".$product_id; // Adding company ID in front of company pattern ID
             // to eliminate possible duplicates between companies
 
@@ -111,15 +102,19 @@ class GetNamedPage extends Command
             // find a way to end up with a properly formatted pattern description. With correct punctuation and spacing.
 
             $data[$key] = [
+                'name' => $value->textContent,
+                'price' => $price->textContent,
+                'category' => $category,
+                'redirect_url' => $url,
+                'image_url' => $image,
                 'full_description' => $full_description,
-                //'description' => ,
                 'company_pattern_id' => $product_id,
-                //'format' => , // this is more complicated than expected for Named, due to specific DOM structure.
-                // Return to this later, time permitting.
+                //'description' => ,
+                //'format' => , // more complicated than expected for Named, try maybe later.
             ];
+
+            dd($data);
         }
-        dd($data); //Fix this problem. My previous data has been replaced with only these two keys. Need to do some sort
-        // of array merge solution or move this loop within the previous loop...
 
         $this->info("Looping through data...");
         foreach($data as $item) {
