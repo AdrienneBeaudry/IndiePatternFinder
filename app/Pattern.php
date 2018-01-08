@@ -52,16 +52,15 @@ class Pattern extends Model
         'name',
         'company_id',
         'redirect_url',
-        'company_product_id',
+        'company_pattern_id',
         'price',
         'size_type',
         'format',
-        'category',
+        'category_id',
         'image_url',
         'description',
         'supplies',
         'language',
-        'full_description',
     ];
 
     public function company() {

@@ -3,6 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Pattern;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\RequestException;
 use Illuminate\Console\Command;
 use QueryPath;
 
@@ -45,119 +48,134 @@ class GetNamed extends Command
      */
     public function handle()
     {
-        function lastWord($string){
+        function lastWord($string)
+        {
             $pieces = explode(' ', $string);
             $last_word = array_pop($pieces);
             return $last_word;
         }
-/*
-        function scrapeNamed($url) {
 
-        }
-*/
-        $this->info("Scraping page ".$url."...");
+        $i = 1;
+        do {
+            try {
+                $client = new Client();
+                $res = $client->request('GET', "https://www.namedclothing.com/product-category/all-patterns/page/" . $i . "/");
+                //$this->scrapeNamed($res->getBody()->getContents());
+                $this->info("Found page: ".$i);
+                $statusCode = $res->getStatusCode();
+            }
+            catch (RequestException $e) {
+                $statusCode = $e->getResponse()->getStatusCode();
+            }
+            $i++;
+        } while ($statusCode == 200);
+        $this->info("DONE");
+    }
+
+    function scrapeNamed($response)
+    {
+        $this->info("Scraping page " . $response . "...");
 
         $this->info("Scraping names...");
-        $names = QueryPath::withHTML($url, '.product h3')->toArray();
+        $queryPath = QueryPath::withHTML($response);
+        $names = $queryPath->find('.product h3')->toArray();
 
         $this->info("Scraping prices...");
-        $prices = QueryPath::withHTML($url, '.product .price')->toArray();
+        $prices = $queryPath->find('.product h3')->toArray();
 
         $this->info("Scraping redirect URLs...");
         $urls = [];
-        foreach(QueryPath::withHTML('https://www.namedclothing.com/product-category/all-patterns/page/2/')->find('.product a') as $product){
+        foreach ($queryPath->find('.product a') as $product) {
             $red_url = $product->attr('href');
             $urls[] = $red_url;
         };
 
         $this->info("Scraping images...");
         $images = [];
-        foreach(QueryPath::withHTML('https://www.namedclothing.com/product-category/all-patterns/page/2/')->find('.product a img') as $product){
+        foreach ($queryPath->find('.product a img') as $product) {
             $img_url = $product->attr('src');
             $images[] = $img_url;
         };
 
         $this->info("Restructuring data & fetching info on individual product pages...");
         $data = [];
-        foreach($names as $key => $value) {
-            $this->info("Now processing product ===============> ".strtoupper($value->textContent));
+        foreach ($names as $key => $value) {
+            $this->info("Now processing product ===============> " . strtoupper($value->textContent));
             $price = $prices[$key];
             $category = lastWord($value->textContent);
-            $url = $urls[$key];
+            $response = $urls[$key];
             $image = $images[$key];
 
             $this->info("Scraping pattern description...");
-            $raw_description = QueryPath::withHTML($url)->find('.span6')->first('p')->text();
-            $full_description =  preg_replace('/\s+/', ' ',$raw_description);
+            $raw_description = $queryPath->find('.span6')->first('p')->text();
+            $full_description = preg_replace('/\s+/', ' ', $raw_description);
 
             $this->info("Scraping company product ID...");
-            $product_id = QueryPath::withHTML($url)->find('form.cart')->attr('data-product_id');
-            $product_id = "1-".$product_id; // Adds company ID in front of company pattern ID
+            $product_id = $queryPath->find('form.cart')->attr('data-product_id');
+            $product_id = "1-" . $product_id; // Adds company ID in front of company pattern ID
 
             $this->info("Scraping short description...");
-            $description = QueryPath::withHTML($url, 'ul:nth(4)')->text();
+            $description = $queryPath->find('ul:nth(4)')->text();
 
             $this->info("Scraping short supplies...");
-            $supplies = QueryPath::withHTML($url, 'ul:nth(6)')->text();
+            $supplies = $queryPath->find('ul:nth(6)')->text();
 
             $this->info("Scraping format & language...");
             $string = "";
-            foreach (QueryPath::withHTML($url, '#pa_pattern-type-and-language option') as $option) {
+            foreach ($queryPath->find('#pa_pattern-type-and-language option') as $option) {
                 $format = $option->attr('value');
                 $string = $string . $format;
             }
 
             $this->info("Reading format...");
             $format = null;
-            if(strpos($string, 'pdf') !== false && strpos($string, 'print') !== false ) {
+            if (strpos($string, 'pdf') !== false && strpos($string, 'print') !== false) {
                 $format = 3;
-            }
-            elseif(strpos($string, 'pdf') !== false) {
+            } elseif (strpos($string, 'pdf') !== false) {
                 $format = 1;
-            }
-            elseif(strpos($string, 'print') !== false) {
+            } elseif (strpos($string, 'print') !== false) {
                 $format = 2;
             }
 
             $this->info("Reading language...");
             $language = "";
-            if(strpos($string, 'english') !== false) {
+            if (strpos($string, 'english') !== false) {
                 $language = $language . "English ";
             }
-            if(strpos($string, 'finnish') !== false) {
+            if (strpos($string, 'finnish') !== false) {
                 $language = $language . "Finnish ";
             }
-            if(strpos($string, 'french') !== false) {
+            if (strpos($string, 'french') !== false) {
                 $language = $language . "French ";
             }
-            if(strpos($string, 'german') !== false) {
+            if (strpos($string, 'german') !== false) {
                 $language = $language . "German ";
             }
-            if(strpos($string, 'japanese') !== false) {
+            if (strpos($string, 'japanese') !== false) {
                 $language = $language . "Japanese ";
             }
-            if(strpos($string, 'spanish') !== false) {
+            if (strpos($string, 'spanish') !== false) {
                 $language = $language . "Spanish ";
             }
 
             $data[$key] = [
                 'name' => $value->textContent,
                 'price' => $price->textContent,
-                'category' => $category,
-                'redirect_url' => $url,
+                //'category_id' => $category,
+                //'company_id' => $company_id,
+                'redirect_url' => $response,
                 'image_url' => $image,
                 'company_pattern_id' => $product_id,
                 'description' => $description,
                 'supplies' => $supplies,
                 'format' => $format,
                 'language' => $language,
-                'full_description' => $full_description,
             ];
         }
 
         $this->info("Looping through data...");
-        foreach($data as $item) {
-            $this->info("Inserting/updating: ". $item['name']);
+        foreach ($data as $item) {
+            $this->info("Inserting/updating: " . $item['name']);
             $item['company_id'] = '1';
             // is it okay to use the method findOrNew here??
             $dbPattern = Pattern::findOrNew($item['name']);
@@ -165,17 +183,9 @@ class GetNamed extends Command
         }
 
         /*
-
-        $i=1;
-        do {
-            $url = "https://www.namedclothing.com/product-category/all-patterns/" . $i;
-            scrapeNamed($url);
-            $i++;
-        }
-        while (get_headers($url)[0] == 'HTTP/1.1 200 OK');
-
-        */
-
+         * Add insert into COMPANIES + CATEGORIES tables
+         *
+         * */
 
     }
 

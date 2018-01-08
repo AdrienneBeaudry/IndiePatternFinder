@@ -12,5 +12,8 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('search');
 });
+
+Route::resource('patterns', 'PatternController');
+Route::resource('companies', 'CompanyController');

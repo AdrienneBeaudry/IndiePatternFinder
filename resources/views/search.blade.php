@@ -5,10 +5,13 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <title>Indie Pattern Finder</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
+
+        <!-- Materialize -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
 
         <!-- Styles -->
         <style>
@@ -35,18 +38,15 @@
                 position: relative;
             }
 
-            .top-right {
-                position: absolute;
-                right: 10px;
-                top: 18px;
-            }
-
             .content {
                 text-align: center;
+                width: 75%;
             }
 
             .title {
-                font-size: 84px;
+                font-size: 64px;
+                line-height: 55px;
+                margin-bottom: 20px;
             }
 
             .links > a {
@@ -59,37 +59,59 @@
                 text-transform: uppercase;
             }
 
-            .m-b-md {
-                margin-bottom: 30px;
+            #search_bar {
+                width: 50%;
+                margin-bottom: 20px;
             }
+
+            input {
+                margin-top: 20px;
+                height: 42px;
+            }
+
+            input[type="text"] {
+                font-size: 20px;
+                padding-left: 18px;
+            }
+
+            .text-center {
+                display: block;
+                margin: 0 auto;
+            }
+
+            button {
+                border-radius: 0;
+                color: dimgrey !important;
+                font-weight: bold;
+                margin-top: 15px;
+            }
+
         </style>
     </head>
     <body>
         <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @auth
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ route('login') }}">Login</a>
-                        <a href="{{ route('register') }}">Register</a>
-                    @endauth
-                </div>
-            @endif
 
             <div class="content">
+
                 <div class="title m-b-md">
-                    Laravel
+                    Indie <br>Pattern <br>Finder
                 </div>
 
-                <div class="links">
-                    <a href="https://laravel.com/docs">Documentation</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
-                </div>
+                <form action="#" method="get" >
+
+                    <input type="text" id="search_bar" class="browser-default"/>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary grey lighten-2">Search</button>
+                    </div>
+
+                </form>
+
             </div>
         </div>
+
+        <!-- Materialize JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+
     </body>
 </html>
