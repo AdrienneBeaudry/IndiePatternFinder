@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Category;
 use App\Company;
 use App\Pattern;
+use App\Scraper;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Console\Command;
@@ -73,6 +74,9 @@ class GetNamed extends Command
         $this->info("DONE");
     }
 
+    /**
+     * @param $response
+     */
     function namedScraper($response)
     {
         $this->info("Scraping page Named pattern shop...");
@@ -124,73 +128,34 @@ class GetNamed extends Command
             }
 
             $this->info("Reading format...");
-            $format = null;
-            if (strpos($string, 'pdf') !== false && strpos($string, 'print') !== false) {
-                $format = 3;
-            } elseif (strpos($string, 'pdf') !== false) {
-                $format = 1;
-            } elseif (strpos($string, 'print') !== false) {
-                $format = 2;
-            }
+            $format = Scraper::readFormat($string);
 
             $this->info("Reading language...");
-            $language = "";
-            if (strpos($string, 'english') !== false) {
-                $language = $language . "English ";
-            }
-            if (strpos($string, 'finnish') !== false) {
-                $language = $language . "Finnish ";
-            }
-            if (strpos($string, 'french') !== false) {
-                $language = $language . "French ";
-            }
-            if (strpos($string, 'german') !== false) {
-                $language = $language . "German ";
-            }
-            if (strpos($string, 'japanese') !== false) {
-                $language = $language . "Japanese ";
-            }
-            if (strpos($string, 'spanish') !== false) {
-                $language = $language . "Spanish ";
-            }
+            $language = Scraper::readLanguage($string);
 
-            /*
+
             $this->info("Inserting company into db.");
             $company = ['name' => 'Named'];
             $dbCompany = Company::findOrNew($company['name']);
             $dbCompany->fill($company)->save();
-            $company_id = $dbCompany->id;
+            //$company_id = $dbCompany->id;
 
-
+/*
+ * Ask Marcus:
+ * Problem with characters for patterns with name
+ *  LAHJA DRESSING GOWN ? WOMEN´S / LAHJA DRESSING GOWN - WOMEN´S
+ *  LAHJA DRESSING GOWN ? MEN´S / LAHJA DRESSING GOWN - MEN´S
+ *
+ *
             $this->info("Reading category...");
             $category = lastWord($value->textContent);
             $category = strtolower($category);
             $category = ['name' => $category];
             $this->info("Inserting category into db.");
-            $dbCategory = Category::findOrNew($category);
+            $dbCategory = Category::findOrNew($category['name']);
             $dbCategory->fill($category)->save();
-            $category_id = $dbCategory->id;
-            */
-
-
-            /*
-            $category = null;
-            if (strpos($raw_category, 'dress') !== false) {
-                $category = 3;
-            } elseif (strpos($string, 'pdf') !== false) {
-                $category = 1;
-            } elseif (strpos($string, 'print') !== false) {
-                $category = 2;
-            }
-            */
-
-            /* Border cases:
-             * - dress shirt
-             * - bath robe - men's / bath robe women's
-             * - other languages?
-             *
-             *
-             * */
+            //$category_id = $dbCategory->id;
+*/
 
             $patterns[$key] = [
                 'name' => $value->textContent,
@@ -207,17 +172,12 @@ class GetNamed extends Command
             ];
         }
 
-
-
         $this->info("Looping for insert...");
-
         foreach ($patterns as $pattern) {
             $this->info("Inserting/updating: " . $pattern['name']);
             // is findOrNew the best method here??
             $dbPattern = Pattern::findOrNew($pattern['name']);
             $dbPattern->fill($pattern)->save();
         }
-
     }
-
 }
