@@ -2,9 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Category;
+use App\Company;
 use App\Pattern;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Console\Command;
 use QueryPath;
@@ -60,7 +61,7 @@ class GetNamed extends Command
             try {
                 $client = new Client();
                 $res = $client->request('GET', "https://www.namedclothing.com/product-category/all-patterns/page/" . $i . "/");
-                //$this->scrapeNamed($res->getBody()->getContents());
+                $this->namedScraper($res->getBody()->getContents());
                 $this->info("Found page: ".$i);
                 $statusCode = $res->getStatusCode();
             }
@@ -72,16 +73,16 @@ class GetNamed extends Command
         $this->info("DONE");
     }
 
-    function scrapeNamed($response)
+    function namedScraper($response)
     {
-        $this->info("Scraping page " . $response . "...");
+        $this->info("Scraping page Named pattern shop...");
 
         $this->info("Scraping names...");
         $queryPath = QueryPath::withHTML($response);
         $names = $queryPath->find('.product h3')->toArray();
 
         $this->info("Scraping prices...");
-        $prices = $queryPath->find('.product h3')->toArray();
+        $prices = $queryPath->find('.product .price')->toArray();
 
         $this->info("Scraping redirect URLs...");
         $urls = [];
@@ -97,21 +98,16 @@ class GetNamed extends Command
             $images[] = $img_url;
         };
 
-        $this->info("Restructuring data & fetching info on individual product pages...");
-        $data = [];
+        $this->info("Restructuring patterns & fetching info on individual product pages...");
+        $patterns = [];
         foreach ($names as $key => $value) {
             $this->info("Now processing product ===============> " . strtoupper($value->textContent));
             $price = $prices[$key];
-            $category = lastWord($value->textContent);
             $response = $urls[$key];
             $image = $images[$key];
 
-            $this->info("Scraping pattern description...");
-            $raw_description = $queryPath->find('.span6')->first('p')->text();
-            $full_description = preg_replace('/\s+/', ' ', $raw_description);
-
             $this->info("Scraping company product ID...");
-            $product_id = $queryPath->find('form.cart')->attr('data-product_id');
+            $product_id = $queryPath->find('form.cart')->attr('patterns-product_id');
             $product_id = "1-" . $product_id; // Adds company ID in front of company pattern ID
 
             $this->info("Scraping short description...");
@@ -158,11 +154,49 @@ class GetNamed extends Command
                 $language = $language . "Spanish ";
             }
 
-            $data[$key] = [
+            /*
+            $this->info("Inserting company into db.");
+            $company = ['name' => 'Named'];
+            $dbCompany = Company::findOrNew($company['name']);
+            $dbCompany->fill($company)->save();
+            $company_id = $dbCompany->id;
+
+
+            $this->info("Reading category...");
+            $category = lastWord($value->textContent);
+            $category = strtolower($category);
+            $category = ['name' => $category];
+            $this->info("Inserting category into db.");
+            $dbCategory = Category::findOrNew($category);
+            $dbCategory->fill($category)->save();
+            $category_id = $dbCategory->id;
+            */
+
+
+            /*
+            $category = null;
+            if (strpos($raw_category, 'dress') !== false) {
+                $category = 3;
+            } elseif (strpos($string, 'pdf') !== false) {
+                $category = 1;
+            } elseif (strpos($string, 'print') !== false) {
+                $category = 2;
+            }
+            */
+
+            /* Border cases:
+             * - dress shirt
+             * - bath robe - men's / bath robe women's
+             * - other languages?
+             *
+             *
+             * */
+
+            $patterns[$key] = [
                 'name' => $value->textContent,
                 'price' => $price->textContent,
-                //'category_id' => $category,
-                //'company_id' => $company_id,
+                //'category_id' => $category_id,
+                'company_id' => '1', // change this later on
                 'redirect_url' => $response,
                 'image_url' => $image,
                 'company_pattern_id' => $product_id,
@@ -173,19 +207,16 @@ class GetNamed extends Command
             ];
         }
 
-        $this->info("Looping through data...");
-        foreach ($data as $item) {
-            $this->info("Inserting/updating: " . $item['name']);
-            $item['company_id'] = '1';
-            // is it okay to use the method findOrNew here??
-            $dbPattern = Pattern::findOrNew($item['name']);
-            $dbPattern->fill($item)->save();
-        }
 
-        /*
-         * Add insert into COMPANIES + CATEGORIES tables
-         *
-         * */
+
+        $this->info("Looping for insert...");
+
+        foreach ($patterns as $pattern) {
+            $this->info("Inserting/updating: " . $pattern['name']);
+            // is findOrNew the best method here??
+            $dbPattern = Pattern::findOrNew($pattern['name']);
+            $dbPattern->fill($pattern)->save();
+        }
 
     }
 
