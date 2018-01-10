@@ -50,12 +50,12 @@ class GetNamed extends Command
      */
     public function handle()
     {
-        function lastWord($string)
-        {
-            $pieces = explode(' ', $string);
-            $last_word = array_pop($pieces);
-            return $last_word;
-        }
+
+        $this->info("Inserting company into db.");
+        $company = ['id' => '1', 'name' => 'Named'];
+        $dbCompany = Company::findOrNew($company['id']);
+        $dbCompany->fill($company)->save();
+        //$company_id = $dbCompany->id;
 
         $i = 1;
         do {
@@ -110,19 +110,21 @@ class GetNamed extends Command
             $response = $urls[$key];
             $image = $images[$key];
 
+            $subQueryPath = QueryPath::withHTML($response);
+
             $this->info("Scraping company product ID...");
-            $product_id = $queryPath->find('form.cart')->attr('patterns-product_id');
+            $product_id = $subQueryPath->find('form.cart')->attr('data-product_id');
             $product_id = "1-" . $product_id; // Adds company ID in front of company pattern ID
 
             $this->info("Scraping short description...");
-            $description = $queryPath->find('ul:nth(4)')->text();
+            $description = $subQueryPath->find('ul:nth(4)')->text();
 
             $this->info("Scraping short supplies...");
-            $supplies = $queryPath->find('ul:nth(6)')->text();
+            $supplies = $subQueryPath->find('ul:nth(6)')->text();
 
             $this->info("Scraping format & language...");
             $string = "";
-            foreach ($queryPath->find('#pa_pattern-type-and-language option') as $option) {
+            foreach ($subQueryPath->find('#pa_pattern-type-and-language option') as $option) {
                 $format = $option->attr('value');
                 $string = $string . $format;
             }
@@ -132,13 +134,6 @@ class GetNamed extends Command
 
             $this->info("Reading language...");
             $language = Scraper::readLanguage($string);
-
-
-            $this->info("Inserting company into db.");
-            $company = ['name' => 'Named'];
-            $dbCompany = Company::findOrNew($company['name']);
-            $dbCompany->fill($company)->save();
-            //$company_id = $dbCompany->id;
 
 /*
  * Ask Marcus:
@@ -179,5 +174,12 @@ class GetNamed extends Command
             $dbPattern = Pattern::findOrNew($pattern['name']);
             $dbPattern->fill($pattern)->save();
         }
+    }
+
+    function lastWord($string)
+    {
+        $pieces = explode(' ', $string);
+        $last_word = array_pop($pieces);
+        return $last_word;
     }
 }

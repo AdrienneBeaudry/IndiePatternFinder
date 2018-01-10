@@ -97,9 +97,9 @@
                     Indie <br>Pattern <br>Finder
                 </div>
 
-                <form action="#" method="get" >
+                <form action="{{ action('PatternController@search') }}" method="get" >
 
-                    <input type="text" id="search_bar" class="browser-default"/>
+                    <input type="text" name="query" id="search_bar" class="browser-default"/>
 
                     <div class="text-center">
                         <button type="submit" class="btn btn-primary grey lighten-2">Search</button>

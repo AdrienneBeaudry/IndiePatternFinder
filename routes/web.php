@@ -12,8 +12,7 @@
 */
 
 Route::get('/', function () {
-    return view('search');
+    return view('home');
 });
 
-Route::resource('patterns', 'PatternController');
-Route::resource('companies', 'CompanyController');
+Route::get('/search', 'PatternController@search');
