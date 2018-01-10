@@ -62,6 +62,8 @@
             #search_bar {
                 width: 50%;
                 margin-bottom: 20px;
+                box-shadow: 3px 3px 3px -3px gray;
+                border: 1px solid lightgray;
             }
 
             input {

@@ -14,6 +14,7 @@ class PatternController extends Controller
         $query = $request->query('query');
         $patterns = DB::table('patterns')
             ->where('description', 'like', "%".$query."%")
+            ->orWhere('name', 'like', "%".$query."%")
             ->get();
 
         return view('patterns.search', ['query' => $query, 'patterns' => $patterns]);
