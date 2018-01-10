@@ -10,8 +10,8 @@
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
 
-        <!-- Materialize -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+        <!-- Bootstrap -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
 
         <!-- Styles -->
         <style>
@@ -81,9 +81,13 @@
 
             button {
                 border-radius: 0;
-                color: dimgrey !important;
+                background-color: #E8E8E8 !important;
+                color: dimgray;
                 font-weight: bold;
-                margin-top: 15px;
+                margin-top: 10px;
+                width: 130px;
+                height: 35px;
+                border: none;
             }
 
         </style>
@@ -102,7 +106,7 @@
                     <input type="text" name="query" id="search_bar" class="browser-default"/>
 
                     <div class="text-center">
-                        <button type="submit" class="btn btn-primary grey lighten-2">Search</button>
+                        <button type="submit" class="">Search</button>
                     </div>
 
                 </form>
@@ -110,8 +114,10 @@
             </div>
         </div>
 
-        <!-- Materialize JS -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+        <!-- Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
 
     </body>
 </html>
