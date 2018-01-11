@@ -59,4 +59,11 @@ class Scraper
          *
          * */
     }
+
+    public static function lastWord($string)
+    {
+        $pieces = explode(' ', $string);
+        $last_word = array_pop($pieces);
+        return $last_word;
+    }
 }

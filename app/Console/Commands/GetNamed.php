@@ -79,7 +79,7 @@ class GetNamed extends Command
      */
     function namedScraper($response)
     {
-        $this->info("Scraping page Named pattern shop...");
+        $this->info("Scraping Named pattern shop...");
 
         $this->info("Scraping names...");
         $queryPath = QueryPath::withHTML($response);
@@ -143,6 +143,7 @@ class GetNamed extends Command
  *
  *
             $this->info("Reading category...");
+            // lastWord() function moved to scraper class, so call it like so Scraper::lastWord instead !!!!!!
             $category = lastWord($value->textContent);
             $category = strtolower($category);
             $category = ['name' => $category];
@@ -174,12 +175,5 @@ class GetNamed extends Command
             $dbPattern = Pattern::findOrNew($pattern['name']);
             $dbPattern->fill($pattern)->save();
         }
-    }
-
-    function lastWord($string)
-    {
-        $pieces = explode(' ', $string);
-        $last_word = array_pop($pieces);
-        return $last_word;
     }
 }
