@@ -53,18 +53,14 @@ class GetGrainline extends Command
 
         */
 
-        $i = 1;
-        do {
-            try {
-                $client = new Client();
-                $res = $client->request('GET', "https://grainlinestudio.com/shop/");
-                $this->grainlineScraper($res->getBody()->getContents());
-                $statusCode = $res->getStatusCode();
-            }
-            catch (RequestException $e) {
-                $statusCode = $e->getResponse()->getStatusCode();
-            }
-        } while ($statusCode == 200);
+        try {
+            $client = new Client();
+            $res = $client->request('GET', "https://grainlinestudio.com/shop/");
+            $this->grainlineScraper($res->getBody()->getContents());
+            $statusCode = $res->getStatusCode();
+        } catch (RequestException $e) {
+            $statusCode = $e->getResponse()->getStatusCode();
+        }
         $this->info("DONE");
     }
 
@@ -86,9 +82,16 @@ class GetGrainline extends Command
             //$name = stristr($name,' – ', true);
             //$name = trim($name);
 
-           /* Adds all product to array, except gift certificate
-            * */
-            if (stristr($name,'gift') === false) {
+            /* Adds all product to array, except gift certificate
+             * */
+            if (stristr($name, 'gift') === false) {
+                if (stristr($name, 'Pattern', true) !== false) {
+                    $name = stristr($name, 'Pattern', true);
+                }
+                if (stristr($name, 'Download', true) !== false) {
+                    $name = stristr($name, 'Download', true);
+                }
+                $name = trim($name);
                 $names[] = $name;
             }
         }
@@ -105,7 +108,7 @@ class GetGrainline extends Command
         $urls = [];
         foreach ($queryPath->find('.product_thumbnail a') as $product) {
             $red_url = $product->attr('href');
-            if (stristr($red_url,'gift') === false) {
+            if (stristr($red_url, 'gift') === false) {
                 $urls[] = $red_url;
             }
         }
@@ -115,8 +118,8 @@ class GetGrainline extends Command
         $ids = [];
         foreach ($queryPath->find('.ajax_add_to_cart') as $product) {
             $id = $product->attr('data-product_id');
-            if (stristr($id,'21321') === false) {
-                $id = "2-".$id; // Adds company ID in front of company pattern ID
+            if (stristr($id, '21321') === false) {
+                $id = "2-" . $id; // Adds company ID in front of company pattern ID
                 $ids[] = $id;
             }
         }
@@ -125,7 +128,7 @@ class GetGrainline extends Command
         $images = [];
         foreach ($queryPath->find('.size-shop_catalog') as $image) {
             $img_url = $image->attr('src');
-            if (stristr($img_url,'gift') === false) {
+            if (stristr($img_url, 'gift') === false) {
                 $images[] = $img_url;
             }
         }
@@ -133,7 +136,7 @@ class GetGrainline extends Command
         $this->info("Restructuring patterns & fetching info on individual product pages...");
         $patterns = [];
         foreach ($names as $key => $value) {
-            $this->info("Now processing product ===============> " . strtoupper($value->textContent));
+            $this->info("Now processing product ===============> " . strtoupper($value));
             $price = $prices[$key];
             $response = $urls[$key];
             $image = $images[$key];
@@ -142,27 +145,24 @@ class GetGrainline extends Command
             $subQueryPath = QueryPath::withHTML($response);
 
             $this->info("Scraping description...");
-            $description = $subQueryPath->find('ul:nth(4)')->text();
+            $description = trim($subQueryPath->find('.woocommerce-product-details__short-description')->text());
 
             $this->info("Scraping supplies...");
-            $supplies = $subQueryPath->find('ul:nth(6)')->text();
-
-            $this->info("Scraping format & language...");
-            $string = "";
-            foreach ($subQueryPath->find('#pa_pattern-type-and-language option') as $option) {
-                $format = $option->attr('value');
-                $string = $string . $format;
-            }
+            $supplies = trim($subQueryPath->find('#tab-description')->text());
 
             $this->info("Reading format...");
-            $format = Scraper::readFormat($string);
+            if (stristr($value, 'pdf') === false) {
+                $format = "3";
+            } else {
+                $format = "2";
+            }
 
-            $this->info("Reading language...");
-            $language = Scraper::readLanguage($string);
+            $this->info("Adding language...");
+            $language = "English";
 
             /*
              * Ask Marcus:
-             * Problem with characters for patterns with name
+             *  Problem with characters for patterns with name
              *  LAHJA DRESSING GOWN ? WOMEN´S / LAHJA DRESSING GOWN - WOMEN´S
              *  LAHJA DRESSING GOWN ? MEN´S / LAHJA DRESSING GOWN - MEN´S
              *
@@ -179,8 +179,8 @@ class GetGrainline extends Command
             */
 
             $patterns[$key] = [
-                'name' => $value->textContent,
-                'price' => $price->textContent,
+                'name' => $value,
+                'price' => $price,
                 //'category_id' => $category_id,
                 'company_id' => '1', // change this later on
                 'redirect_url' => $response,

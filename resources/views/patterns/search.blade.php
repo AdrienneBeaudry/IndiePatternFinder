@@ -16,6 +16,10 @@
 
     <!-- Styles -->
     <style>
+
+
+        /* --------------- Default: EXTRA SMALL devices (portrait phones, less than 576px) ---------------- */
+
         html, body {
             background-color: #fff;
             color: #636b6f;
@@ -94,7 +98,7 @@
         }
 
         .pattern-grid {
-            width:100%;
+            width: 100%;
             padding: 10px 10px 0 10px;
             margin: 0;
             list-style: none;
@@ -112,39 +116,122 @@
         .pattern {
             -webkit-flex: 0 0 auto;
             flex: 0 0 auto;
-            width: 25%;
+            width: 100%;
             padding: 0.04%;
             position: relative;
         }
 
         .pattern-container {
-            padding:10px;
+            padding: 10px;
             text-align: center;
         }
 
         .pattern-img {
-            max-width:100%;
-            vertical-align:bottom;
+            max-width: 100%;
+            vertical-align: bottom;
         }
 
         .pattern-label {
-            font-size: 1.2vw;
+            font-size: 4vw;
             border-style: none;
             background-color: #E8E8E8;
-            margin:8% 0 0;
+            margin: 8% 0 0;
             z-index: 1;
             opacity: 0.85;
             color: black;
             position: absolute;
             width: 70%;
+            height: 20%;
             top: 65%;
             left: 15%;
+        }
+
+        .pattern-name {
+            font-size: 3.6vw;
         }
 
         a#home-link {
             text-decoration: none;
             color: inherit;
         }
+
+        .no-result-container {
+            text-align: center;
+            position: relative;
+        }
+
+        .no-result-message {
+            width: 100%;
+            padding: 10px;
+        }
+
+
+        /* --------------------  SMALL devices (landscape phones, 576px and up) ------------------------ */
+        @media (min-width: 576px) {
+            .pattern {
+                width: 50%;
+            }
+
+            .pattern-label {
+                font-size: 2.4vw;
+            }
+
+            .pattern-name {
+                font-size: 2.2vw;
+            }
+        }
+
+        /* ------------------- MEDIUM devices (tablets, 768px and up) ---------------------------------- */
+        @media (min-width: 768px) {
+            .pattern-label {
+                font-size: 2vw;
+            }
+
+            .pattern-name {
+                font-size: 1.8vw;
+            }
+        }
+
+        /*  ------------------ LARGE devices (desktops, 992px and up) ----------------------------------  */
+        @media (min-width: 992px) {
+            .pattern {
+                width: 33%;
+            }
+
+            .pattern-label {
+                font-size: 1.5vw;
+            }
+
+            .pattern-name {
+                font-size: 1.3vw;
+            }
+        }
+
+        /* --------------------   EXTRA LARGE devices (large desktops, 1200px and up)  ------------------- */
+        @media (min-width: 1200px) {
+            .pattern {
+                width: 25%;
+            }
+
+            .pattern-label {
+                font-size: 1.2vw;
+                border-style: none;
+                background-color: #E8E8E8;
+                margin: 8% 0 0;
+                z-index: 1;
+                opacity: 0.85;
+                color: black;
+                position: absolute;
+                width: 70%;
+                top: 65%;
+                left: 15%;
+            }
+
+            .pattern-name {
+                font-size: 1.1vw;
+            }
+        }
+
 
     </style>
 </head>
@@ -155,13 +242,13 @@
 
         <div class="title m-b-md inline-block col-3">
             <a href="/" id="home-link">
-            Indie Pattern Finder
+                Indie Pattern Finder
             </a>
         </div>
 
-        <form action="{{ action('PatternController@search') }}" method="get" class="form col-8">
+        <form action="" method="get" class="form col-8">
 
-            <input type="text" name="query" id="search_bar" class="inline-block"/>
+            <input type="text" value={{$query}} name="query" id="search_bar" class="inline-block"/>
 
             <div class="text-center inline-block">
                 <button type="submit" id="search-button">Search</button>
@@ -171,21 +258,24 @@
 
     <div class="content">
         <ul class="pattern-grid">
+            @if(count($patterns) === 0)
+                <div class="no-result-container">
+                    <p class="no-result-message">No patterns found with this keyword. Please try again.</p>
+                </div>
+            @endif
+
             @foreach($patterns as $key => $value)
                 <li class="pattern">
                     <div class="pattern-container">
                         <a class="btn" href="{{ URL::to($value->redirect_url) }}">
                             <img src="{{ $value->image_url }}" class="pattern-img">
                         </a>
-
-                            <button class="pattern-label"><strong>Designer #{{ $value->company_id }} </strong>
-                                <br> {{ $value->name }}<br> {{ $value->price }}</button>
-
+                        <button class="pattern-label"><strong>Designer #{{ $value->company_id }} </strong>
+                            <br> <span class="pattern-name">{{ $value->name }}</span><br> {{ $value->price }}</button>
                     </div>
                 </li>
             @endforeach
         </ul>
-
     </div>
 </div>
 
