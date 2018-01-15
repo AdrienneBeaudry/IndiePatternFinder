@@ -11,8 +11,22 @@
 |
 */
 
-Route::get('/', function () {
-    return view('home');
-});
 
-Route::get('/search', 'PatternController@search');
+//Route::get('/', 'PatternController@search');
+
+//Route::get('/', function () {
+//    return view('welcome');
+//});
+
+//Route::post('/SearchRequest', function(){
+//    if(Request::ajax()){
+//        return var_dump(Response::json(Request::all()));
+//    }
+//});
+
+
+//Route::get('/search', 'PatternController@search');
+
+Route::get('/', 'PatternController@index');
+
+Route::get('/search', 'PatternController@searchResults');

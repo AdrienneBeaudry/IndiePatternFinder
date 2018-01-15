@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css"
           integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
 
+
     <!-- Styles -->
     <style>
 
@@ -72,7 +73,7 @@
             text-align: center;
         }
 
-        #search_bar {
+        #query {
             margin-top: 15px;
             padding-bottom: 20px;
             box-shadow: 3px 3px 3px -3px gray;
@@ -168,7 +169,6 @@
             padding: 10px;
         }
 
-
         /* --------------------  SMALL devices (landscape phones, 576px and up) ------------------------ */
         @media (min-width: 576px) {
             .pattern {
@@ -194,7 +194,7 @@
                 display: inline-block;
             }
 
-            #search_bar {
+            #query {
                 width: unset;
             }
 
@@ -280,38 +280,19 @@
         </div>
 
         <form action="#" method="get" class="form col-sm-8" id="searchRequest">
-
-            <input type="text"  name="query" id="query" class="inline-block"/>
-
+            <input type="text" id="query" class="inline-block" value="<?= $query ?>"/>
             <div class="text-center inline-block">
-                <button type="" id="search-button" value="searchRequest">Search</button>
+                <button type="submit" id="search-button">Search</button>
             </div>
         </form>
     </header>
 
-    <div id="getPatternData"></div>
-    <div id="ajaxData"></div>
     <div class="content">
-        <ul class="pattern-grid">
-            @if(count($patterns) === 0)
-                <div class="no-result-container">
-                    <p class="no-result-message">No patterns found with this keyword. Please try again.</p>
-                </div>
-            @endif
-
-            @foreach($patterns as $key => $value)
-                <li class="pattern">
-                    <div class="pattern-container">
-                        <a class="btn" href="{{ URL::to($value->redirect_url) }}">
-                            <img src="{{ $value->image_url }}" class="pattern-img">
-                        </a>
-                        <button class="pattern-label"><strong>Designer #{{ $value->company_id }} </strong>
-                            <br> <span class="pattern-name">{{ $value->name }}</span><br> {{ $value->price }}</button>
-                    </div>
-                </li>
-            @endforeach
-        </ul>
+        <div id="ajax-response">
+        @include('patterns.searchResults')
+        </div>
     </div>
+
 </div>
 
 <!-- Bootstrap JS -->
@@ -322,25 +303,17 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js"
         integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4"
         crossorigin="anonymous"></script>
+
 <script type="text/javascript">
-
-    $(document).ready(function(){
-        $('#search-button').click(function(){
-            $.get('getRequest', function(data){
-                $('#getPatternData').append(data);
-                console.log(data);
+    $(document).ready(function () {
+        $('#searchRequest').submit(function (e) {
+            e.preventDefault();
+            var query = {query:  $('#query').val()};
+            $.get('search', {query: query.query}, function (data) {
+                $('#ajax-response').html(data);
+                history.pushState(query, "Search for " + query.query, "?query=" + query.query);
             });
         });
-
-        $('#searchRequest').submit(function(){
-            var query = $('#query').val();
-
-            $.get('search', { query:query }, function(data){
-                console.log(data);
-                $('#ajaxData').html(data);
-            });
-        });
-
     });
 </script>
 
