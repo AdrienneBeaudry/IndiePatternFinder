@@ -2,29 +2,27 @@
 
 namespace App\Console\Commands;
 
-use App\Company;
 use App\Pattern;
-use App\Scraper;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Console\Command;
 use QueryPath;
 
-class GetGrainline extends Command
+class GetPauline extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'get:grainline';
+    protected $signature = 'get:pauline';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Scrape patterns from Grainline Studio';
+    protected $description = 'Scrape Pauline Alice pattern shop.';
 
     /**
      * Create a new command instance.
@@ -44,10 +42,11 @@ class GetGrainline extends Command
     public function handle()
     {
 
+        // Clean up the below code. What is essential really?
         try {
             $client = new Client();
-            $res = $client->request('GET', "https://grainlinestudio.com/shop/");
-            $this->grainlineScraper($res->getBody()->getContents());
+            $res = $client->request('GET', "https://www.paulinealicepatterns.com/en/");
+            $this->paulineScraper($res->getBody()->getContents());
             $statusCode = $res->getStatusCode();
         } catch (RequestException $e) {
             $statusCode = $e->getResponse()->getStatusCode();
@@ -55,102 +54,67 @@ class GetGrainline extends Command
         $this->info("DONE");
     }
 
-    function grainlineScraper($response)
+    public function paulineScraper($response)
     {
-        $this->info("Scraping Grainline pattern shop...");
+        $this->info("Scraping Pauline Alice pattern shop...");
 
         $this->info("Scraping names...");
         $names = [];
         $queryPath = QueryPath::withHTML($response);
-        foreach ($queryPath->find('.product-title-link') as $name) {
+        foreach ($queryPath->find('.title') as $name) {
             $name = $name->text();
-            /*
-             * the below code was to remove pattern duplicates, i.e. the same pattern in PDF and Paper format
-             * Turns out it will probably be easier to remove each version of the same product
-             *  after the final array is constructed, and we have the links paired with the correct name etc.
-             *
-             * */
-            //$name = stristr($name,' – ', true);
-            //$name = trim($name);
-
-            /* Adds all product to array, except gift certificate
-             * */
-            if (stristr($name, 'gift') === false) {
-                if (stristr($name, 'Pattern', true) !== false) {
-                    $name = stristr($name, 'Pattern', true);
-                }
-                if (stristr($name, 'Download', true) !== false) {
-                    $name = stristr($name, 'Download', true);
-                }
-                $name = trim($name);
-                $names[] = $name;
-            }
-        }
-        //$names = array_unique(array_filter($names));
-
-        $this->info("Scraping prices...");
-        $prices = [];
-        foreach ($queryPath->find('.price') as $price) {
-            $price = $price->text();
-            $prices[] = $price;
-        }
-
-        $this->info("Scraping redirect URLs...");
-        $urls = [];
-        foreach ($queryPath->find('.product_thumbnail a') as $product) {
-            $red_url = $product->attr('href');
-            if (stristr($red_url, 'gift') === false) {
-                $urls[] = $red_url;
-            }
+            $names[] = $name;
         }
 
         $this->info("Scraping company product ID...");
         $ids = [];
-        foreach ($queryPath->find('.ajax_add_to_cart') as $product) {
-            $id = $product->attr('data-product_id');
-            // Check for product ID 21321, which is a giftcard, not a pattern
-            if (stristr($id, '21321') === false) {
-                $id = "2-" . $id; // Adds company ID in front of company pattern ID
-                // Also need to add company ID into company database later...
-                $ids[] = $id;
-            }
+        foreach ($queryPath->find('.product_img_link') as $product) {
+            $id = $product->attr('data-id-product');
+            $id = "3-" . $id; // Adds company ID in front of company pattern ID
+            // Also need to add company ID into company database later...
+            $ids[] = $id;
         }
 
-        $this->info("Scraping images...");
-        $images = [];
-        foreach ($queryPath->find('.size-shop_catalog') as $image) {
-            $img_url = $image->attr('src');
-            if (stristr($img_url, 'gift') === false) {
-                $images[] = $img_url;
-            }
+        $this->info("Scraping redirect URLs...");
+        $urls = [];
+        foreach ($queryPath->find('.product_img_link') as $product) {
+            $red_url = $product->attr('href');
+            $urls[] = $red_url;
         }
 
         $this->info("Restructuring patterns & fetching info on individual product pages...");
         $patterns = [];
         foreach ($names as $key => $value) {
             $this->info("Now processing product ===============> " . strtoupper($value));
-            $price = $prices[$key];
             $response = $urls[$key];
-            $image = $images[$key];
             $pattern_id = $ids[$key];
 
             $subQueryPath = QueryPath::withHTML($response);
 
             $this->info("Scraping description...");
-            $description = trim($subQueryPath->find('.woocommerce-product-details__short-description')->text());
-
-            $this->info("Scraping supplies...");
-            $supplies = trim($subQueryPath->find('#tab-description')->text());
+            $description = $subQueryPath->find('#short_description_content p:nth(1)')->text();
 
             $this->info("Reading format...");
-            if (stristr($value, 'pdf') === false) {
+            $raw_format = $subQueryPath->find('#short_description_content p:nth(5)')->text();
+            if (stristr($raw_format, 'pdf') === false) {
                 $format = "3";
             } else {
                 $format = "2";
             }
 
+            $this->info("Scraping supplies...");
+            $supplies = $subQueryPath->find('div#tabs-1')->text();
+            $position = strpos($supplies, "FABRIC REQUIREMENT");
+            $supplies = trim(substr($supplies, 0, $position));
+
+            $this->info("Scraping prices...");
+            $price = $subQueryPath->find('#our_price_display')->text();
+
             $this->info("Adding language...");
-            $language = "English";
+            $language = "English French Spanish";
+
+            $this->info("Scraping image URLs...");
+            $img = $subQueryPath->find('.shown')->attr('href');
 
             /*
              * Ask Marcus:
@@ -174,9 +138,9 @@ class GetGrainline extends Command
                 'name' => $value,
                 'price' => $price,
                 //'category_id' => $category_id,
-                'company_id' => '1', // change this later on
+                'company_id' => '3', // change this later on
                 'redirect_url' => $response,
-                'image_url' => $image,
+                'image_url' => $img,
                 'company_pattern_id' => $pattern_id,
                 'description' => $description,
                 'supplies' => $supplies,
