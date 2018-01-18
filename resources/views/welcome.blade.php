@@ -170,10 +170,10 @@
         }
 
         .pattern-container-pauline-1 {
-            margin: 1.8vw 0 0 -2.6vw;
             text-align: center;
-            width: 95vw;
             overflow: hidden;
+            margin: 1.8vw 0 0 -2.6vw;
+            width: 95vw;
         }
 
         .pattern-img-pauline-1 {
@@ -184,10 +184,10 @@
         }
 
         .pattern-container-pauline-2 {
-            margin: -0.8vw 0 -34px -8vw;
             text-align: center;
-            width: 100vw;
             overflow: hidden;
+            margin: -0.8vw 0 -34px -8vw;
+            width: 100vw;
         }
 
         .pattern-img-pauline-2 {
@@ -197,10 +197,10 @@
         }
 
         .pattern-container-pauline-3 {
-            margin: 5.2vw 0 -34px 4vw;
             text-align: center;
-            width: 88.5vw;
             overflow: hidden;
+            margin: 5.2vw 0 -34px 4vw;
+            width: 88.5vw;
         }
 
         .pattern-img-pauline-3 {
@@ -210,10 +210,10 @@
         }
 
         .pattern-container-pauline-4 {
-            margin: 4.2vw 0 9px -1vw;
             text-align: center;
-            width: 93vw;
             overflow: hidden;
+            margin: 4.2vw 0 9px -1vw;
+            width: 93vw;
         }
 
         .pattern-img-pauline-4 {
@@ -277,6 +277,62 @@
             .pattern-name {
                 font-size: 1.8vw;
             }
+
+            .pattern-container-pauline-1 {
+                margin: -0.4vw 0 0 2.4vw;
+                text-align: center;
+                width: 44.2vw;
+                height: 62.75vw;
+                overflow: hidden;
+            }
+
+            .pattern-img-pauline-1 {
+                object-fit: cover;
+                height: 73vw;
+                margin: -3vw 0 0 -15vw;
+            }
+
+            .pattern-container-pauline-2 {
+                margin: 2vw 0 0 -0.6vw;
+                text-align: center;
+                width: 51vw;
+                height: 62.8vw;
+                overflow: hidden;
+            }
+
+            .pattern-img-pauline-2 {
+                object-fit: cover;
+                height: 75.5vw;
+                margin: -6vw 0 0 -12vw;
+            }
+
+            .pattern-container-pauline-3 {
+                margin: 1.8vw 0 0 2.3vw;
+                text-align: center;
+                width: 44.3vw;
+                height: 63vw;
+                overflow: hidden;
+            }
+
+            .pattern-img-pauline-3 {
+                object-fit: cover;
+                height: 71vw;
+                margin: -4vw 0 0 -13vw;
+            }
+
+            .pattern-container-pauline-4 {
+                margin: 1.9vw 0 0 1.4vw;
+                text-align: center;
+                width: 45.2vw;
+                height: 63vw;
+                overflow: hidden;
+            }
+
+            .pattern-img-pauline-4 {
+                object-fit: cover;
+                height: 74vw;
+                margin: -12vw 0 0 -11vw;
+            }
         }
 
         /*  ------------------ LARGE devices (desktops, 992px and up) ----------------------------------  */
@@ -291,6 +347,62 @@
 
             .pattern-name {
                 font-size: 1.3vw;
+            }
+
+            .pattern-container-pauline-1 {
+                margin: -0.4vw 0 0 2vw;
+                text-align: center;
+                width: 29vw;
+                height: 40.5vw;
+                overflow: hidden;
+            }
+
+            .pattern-img-pauline-1 {
+                object-fit: cover;
+                height: 54vw;
+                margin: -3vw 0 0 -12vw;
+            }
+
+            .pattern-container-pauline-2 {
+                margin: 1.7vw 0 0 2vw;
+                text-align: center;
+                width: 29vw;
+                height: 40.5vw;
+                overflow: hidden;
+            }
+
+            .pattern-img-pauline-2 {
+                object-fit: cover;
+                height: 54vw;
+                margin: -6vw 0 0 -12vw;
+            }
+
+            .pattern-container-pauline-3 {
+                margin: 1.8vw 0 0 2vw;
+                text-align: center;
+                width: 29vw;
+                height: 40.5vw;
+                overflow: hidden;
+            }
+
+            .pattern-img-pauline-3 {
+                object-fit: cover;
+                height: 57vw;
+                margin: -4vw 0 0 -13vw;
+            }
+
+            .pattern-container-pauline-4 {
+                margin: 1.6vw 0 0 2vw;
+                text-align: center;
+                width: 29vw;
+                height: 40.5vw;
+                overflow: hidden;
+            }
+
+            .pattern-img-pauline-4 {
+                object-fit: cover;
+                height: 55vw;
+                margin: -12vw 0 0 -11vw;
             }
         }
 
@@ -333,7 +445,7 @@
             }
 
             .pattern-container-pauline-2 {
-                margin: -0.2vw 0 0 2vw;
+                margin: 1.7vw 0 0 2vw;
                 text-align: center;
                 width: 21vw;
                 height: 29.5vw;
@@ -347,7 +459,7 @@
             }
 
             .pattern-container-pauline-3 {
-                margin: -0.2vw 0 0 2vw;
+                margin: 1.8vw 0 0 2vw;
                 text-align: center;
                 width: 21vw;
                 height: 29.5vw;
@@ -361,7 +473,7 @@
             }
 
             .pattern-container-pauline-4 {
-                margin: -0.2vw 0 0 2vw;
+                margin: 1.8vw 0 0 2vw;
                 text-align: center;
                 width: 21vw;
                 height: 29.5vw;
@@ -370,8 +482,8 @@
 
             .pattern-img-pauline-4 {
                 object-fit: cover;
-                height: 46vw;
-                margin: -4vw 0 0 -13vw;
+                height: 43vw;
+                margin: -12vw 0 0 -12vw;
             }
         }
 
