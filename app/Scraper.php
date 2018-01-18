@@ -27,13 +27,16 @@ class Scraper
         return $language;
     }
 
-    public static function readFormat($string) {
+    public static function readFormat($string, $digitalWord, $physicalWord) {
+        $string = strtolower($string);
+        $digitalWord = strtolower($digitalWord);
+        $physicalWord = strtolower($physicalWord);
         $format = null;
-        if (strpos($string, 'pdf') !== false && strpos($string, 'print') !== false) {
+        if (strpos($string, $digitalWord) !== false && strpos($string, $physicalWord) !== false) {
             $format = 3;
-        } elseif (strpos($string, 'pdf') !== false) {
+        } elseif (strpos($string, $digitalWord) !== false) {
             $format = 1;
-        } elseif (strpos($string, 'print') !== false) {
+        } elseif (strpos($string, $physicalWord) !== false) {
             $format = 2;
         }
         return $format;

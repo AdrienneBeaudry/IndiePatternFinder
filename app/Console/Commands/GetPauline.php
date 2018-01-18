@@ -10,6 +10,13 @@ use GuzzleHttp\Exception\RequestException;
 use Illuminate\Console\Command;
 use QueryPath;
 
+// !!!!!WARNING!!!!
+//the below can be removed when done coding. This is to see the full content of long strings for debugging purposes
+ini_set("xdebug.var_display_max_children", -1);
+ini_set("xdebug.var_display_max_data", -1);
+ini_set("xdebug.var_display_max_depth", -1);
+
+
 class GetPauline extends Command
 {
     /**
@@ -67,6 +74,13 @@ class GetPauline extends Command
         $queryPath = QueryPath::withHTML($response);
         foreach ($queryPath->find('.title') as $name) {
             $name = $name->text();
+            // Remove generic words "Pattern" and "Download" from end of pattern names
+            if (stristr($name, 'PDF', true) !== false) {
+                $name = trim(stristr($name, 'PDF', true)) . " - PDF";
+            }
+            else {
+                $name = $name . " - Paper";
+            }
             $names[] = $name;
         }
 
@@ -98,8 +112,7 @@ class GetPauline extends Command
             $description = $subQueryPath->find('#short_description_content p:nth(1)')->text();
 
             $this->info("Reading format...");
-            $raw_format = $subQueryPath->find('#short_description_content p:nth(5)')->text();
-            $format = Scraper::readFormat($raw_format);
+            $format = Scraper::readFormat($value, 'PDF', 'Paper');
 
             $this->info("Scraping supplies...");
             $supplies = $subQueryPath->find('div#tabs-1')->text();
@@ -122,7 +135,7 @@ class GetPauline extends Command
                 'description' => $description,
                 'supplies' => $supplies,
                 'format' => $format,
-                'language' => "English French Spanish",
+                'language' => "English French Spanish"  ,
             ];
         }
 

@@ -71,6 +71,8 @@ class GetGrainline extends Command
             /* Adds all product to array, except gift certificate
              * */
             if (stristr($name, 'gift') === false) {
+                /* Remove generic words "Pattern" and "Download" from end of pattern names
+                * */
                 if (stristr($name, 'Pattern', true) !== false) {
                     $name = stristr($name, 'Pattern', true);
                 }
@@ -136,7 +138,7 @@ class GetGrainline extends Command
             $supplies = trim($subQueryPath->find('#tab-description')->text());
 
             $this->info("Reading format...");
-            $format = Scraper::readFormat($value);
+            $format = Scraper::readFormat($value, 'PDF', 'Paper');
 
             $patterns[$key] = [
                 'name' => $value,

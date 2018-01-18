@@ -122,7 +122,7 @@ class GetNamed extends Command
             }
 
             $this->info("Reading format...");
-            $format = Scraper::readFormat($string);
+            $format = Scraper::readFormat($string, 'pdf', 'print');
 
             $this->info("Reading language...");
             $language = Scraper::readLanguage($string);
