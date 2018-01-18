@@ -42,14 +42,12 @@ class GetPauline extends Command
     public function handle()
     {
 
-        // Clean up the below code. What is essential really?
         try {
             $client = new Client();
             $res = $client->request('GET', "https://www.paulinealicepatterns.com/en/");
             $this->paulineScraper($res->getBody()->getContents());
-            $statusCode = $res->getStatusCode();
         } catch (RequestException $e) {
-            $statusCode = $e->getResponse()->getStatusCode();
+            return $e;
         }
         $this->info("DONE");
     }
@@ -71,7 +69,7 @@ class GetPauline extends Command
         foreach ($queryPath->find('.product_img_link') as $product) {
             $id = $product->attr('data-id-product');
             $id = "3-" . $id; // Adds company ID in front of company pattern ID
-            // Also need to add company ID into company database later...
+            // Also need to add company ID into company database...
             $ids[] = $id;
         }
 
@@ -116,29 +114,11 @@ class GetPauline extends Command
             $this->info("Scraping image URLs...");
             $img = $subQueryPath->find('.shown')->attr('href');
 
-            /*
-             * Ask Marcus:
-             *  Problem with characters for patterns with name
-             *  LAHJA DRESSING GOWN ? WOMEN´S / LAHJA DRESSING GOWN - WOMEN´S
-             *  LAHJA DRESSING GOWN ? MEN´S / LAHJA DRESSING GOWN - MEN´S
-             *
-             *
-                        $this->info("Reading category...");
-                        // lastWord() function moved to scraper class, so call it like so Scraper::lastWord instead !!!!!!
-                        $category = lastWord($value->textContent);
-                        $category = strtolower($category);
-                        $category = ['name' => $category];
-                        $this->info("Inserting category into db.");
-                        $dbCategory = Category::findOrNew($category['name']);
-                        $dbCategory->fill($category)->save();
-                        //$category_id = $dbCategory->id;
-            */
-
             $patterns[$key] = [
                 'name' => $value,
                 'price' => $price,
                 //'category_id' => $category_id,
-                'company_id' => '3', // change this later on
+                'company_id' => '3',
                 'redirect_url' => $response,
                 'image_url' => $img,
                 'company_pattern_id' => $pattern_id,
@@ -152,7 +132,6 @@ class GetPauline extends Command
         $this->info("Looping for insert...");
         foreach ($patterns as $pattern) {
             $this->info("Inserting/updating: " . $pattern['name']);
-            // is findOrNew the best method here??
             $dbPattern = Pattern::findOrNew($pattern['name']);
             $dbPattern->fill($pattern)->save();
         }
