@@ -266,6 +266,63 @@
                 height: 35px;
                 border: none;
             }
+
+            .pattern-container-pauline-1 {
+                text-align: center;
+                overflow: hidden;
+                margin: -1.2vw 0 0 3.2vw;
+                width: 78vw;
+                height: 62.75vw;
+
+            }
+
+            .pattern-img-pauline-1 {
+                object-fit: cover;
+                height: 71vw;
+                margin: -3vw 0 0 -41vw;
+            }
+
+            .pattern-container-pauline-2 {
+                margin: 2vw 0 0 -0.6vw;
+                text-align: center;
+                width: 46vw;
+                height: 62.8vw;
+                overflow: hidden;
+            }
+
+            .pattern-img-pauline-2 {
+                object-fit: cover;
+                height: 75.5vw;
+                margin: -6vw 0 0 -12vw;
+            }
+
+            .pattern-container-pauline-3 {
+                margin: 1.8vw 0 0 3.3vw;
+                text-align: center;
+                width: 42.3vw;
+                height: 63vw;
+                overflow: hidden;
+            }
+
+            .pattern-img-pauline-3 {
+                object-fit: cover;
+                height: 71vw;
+                margin: -4vw 0 0 -13vw;
+            }
+
+            .pattern-container-pauline-4 {
+                margin: 1.9vw 0 0 2vw;
+                text-align: center;
+                width: 43.5vw;
+                height: 63vw;
+                overflow: hidden;
+            }
+
+            .pattern-img-pauline-4 {
+                object-fit: cover;
+                height: 74vw;
+                margin: -12vw 0 0 -11vw;
+            }
         }
 
         /* ------------------- MEDIUM devices (tablets, 768px and up) ---------------------------------- */
