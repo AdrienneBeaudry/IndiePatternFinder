@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Pattern;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

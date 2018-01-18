@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Category;
 use App\Company;
 use App\Pattern;
 use App\Scraper;

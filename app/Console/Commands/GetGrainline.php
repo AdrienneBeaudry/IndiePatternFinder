@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Company;
 use App\Pattern;
-use App\Scraper;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Console\Command;
