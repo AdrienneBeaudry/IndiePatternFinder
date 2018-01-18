@@ -19,9 +19,12 @@ class PatternController extends Controller
     public function searchResults(Request $request)
     {
         $query = $request->query('query');
+
         $patterns = DB::table('patterns')
+            ->join('companies', 'patterns.company_id', '=', 'companies.id')
             ->where('description', 'like', "%" . $query . "%")
             ->orWhere('name', 'like', "%" . $query . "%")
+            ->orWhere('company_name', 'like', "%" . $query . "%")
             ->get();
 
         return view('patterns.searchResults', ['query' => $query, 'patterns' => $patterns]);
@@ -29,8 +32,10 @@ class PatternController extends Controller
 
     private function searchPatterns($query) {
         return DB::table('patterns')
+            ->join('companies', 'patterns.company_id', '=', 'companies.id')
             ->where('description', 'like', "%" . $query . "%")
             ->orWhere('name', 'like', "%" . $query . "%")
+            ->orWhere('company_name', 'like', "%" . $query . "%")
             ->get();
     }
 }

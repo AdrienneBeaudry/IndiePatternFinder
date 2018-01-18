@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Company;
 use App\Pattern;
+use App\Scraper;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Console\Command;
@@ -43,7 +44,7 @@ class GetGrainline extends Command
     public function handle()
     {
         $this->info("Inserting company into db.");
-        $company = ['id' => '2', 'name' => 'Grainline Studio'];
+        $company = ['id' => '2', 'company_name' => 'Grainline Studio'];
         $dbCompany = Company::findOrNew($company['id']);
         $dbCompany->fill($company)->save();
 
@@ -104,7 +105,6 @@ class GetGrainline extends Command
             // Check for product ID 21321, giftcard
             if (stristr($id, '21321') === false) {
                 $id = "2-" . $id; // Adds company ID in front of company pattern ID
-                // Also need to add company ID into company db...
                 $ids[] = $id;
             }
         }
@@ -136,26 +136,19 @@ class GetGrainline extends Command
             $supplies = trim($subQueryPath->find('#tab-description')->text());
 
             $this->info("Reading format...");
-            if (stristr($value, 'pdf') === false) {
-                $format = "3";
-            } else {
-                $format = "2";
-            }
-
-            $this->info("Adding language...");
-            $language = "English";
+            $format = Scraper::readFormat($value);
 
             $patterns[$key] = [
                 'name' => $value,
                 'price' => $price,
-                'company_id' => '1',
+                'company_id' => '2',
                 'redirect_url' => $response,
                 'image_url' => $image,
                 'company_pattern_id' => $pattern_id,
                 'description' => $description,
                 'supplies' => $supplies,
                 'format' => $format,
-                'language' => $language,
+                'language' => "English",
             ];
         }
 

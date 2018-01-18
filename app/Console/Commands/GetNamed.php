@@ -45,10 +45,9 @@ class GetNamed extends Command
     {
 
         $this->info("Inserting company into db.");
-        $company = ['id' => '1', 'name' => 'Named'];
+        $company = ['id' => '1', 'company_name' => 'Named Patterns'];
         $dbCompany = Company::findOrNew($company['id']);
         $dbCompany->fill($company)->save();
-        //$company_id = $dbCompany->id;
 
         $i = 1;
         do {

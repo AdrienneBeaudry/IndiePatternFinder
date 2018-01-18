@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Company;
 use App\Pattern;
+use App\Scraper;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Console\Command;
@@ -43,7 +44,7 @@ class GetPauline extends Command
     public function handle()
     {
         $this->info("Inserting company into db.");
-        $company = ['id' => '3', 'name' => 'Pauline Alice Patterns'];
+        $company = ['id' => '3', 'company_name' => 'Pauline Alice Patterns'];
         $dbCompany = Company::findOrNew($company['id']);
         $dbCompany->fill($company)->save();
 
@@ -74,7 +75,6 @@ class GetPauline extends Command
         foreach ($queryPath->find('.product_img_link') as $product) {
             $id = $product->attr('data-id-product');
             $id = "3-" . $id; // Adds company ID in front of company pattern ID
-            // Also need to add company ID into company database...
             $ids[] = $id;
         }
 
@@ -99,11 +99,7 @@ class GetPauline extends Command
 
             $this->info("Reading format...");
             $raw_format = $subQueryPath->find('#short_description_content p:nth(5)')->text();
-            if (stristr($raw_format, 'pdf') === false) {
-                $format = "3";
-            } else {
-                $format = "2";
-            }
+            $format = Scraper::readFormat($raw_format);
 
             $this->info("Scraping supplies...");
             $supplies = $subQueryPath->find('div#tabs-1')->text();
@@ -112,9 +108,6 @@ class GetPauline extends Command
 
             $this->info("Scraping prices...");
             $price = $subQueryPath->find('#our_price_display')->text();
-
-            $this->info("Adding language...");
-            $language = "English French Spanish";
 
             $this->info("Scraping image URLs...");
             $img = $subQueryPath->find('.shown')->attr('href');
@@ -129,7 +122,7 @@ class GetPauline extends Command
                 'description' => $description,
                 'supplies' => $supplies,
                 'format' => $format,
-                'language' => $language,
+                'language' => "English French Spanish",
             ];
         }
 
