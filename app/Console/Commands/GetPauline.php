@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Company;
 use App\Pattern;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -41,6 +42,10 @@ class GetPauline extends Command
      */
     public function handle()
     {
+        $this->info("Inserting company into db.");
+        $company = ['id' => '3', 'name' => 'Pauline Alice Patterns'];
+        $dbCompany = Company::findOrNew($company['id']);
+        $dbCompany->fill($company)->save();
 
         try {
             $client = new Client();
@@ -117,7 +122,6 @@ class GetPauline extends Command
             $patterns[$key] = [
                 'name' => $value,
                 'price' => $price,
-                //'category_id' => $category_id,
                 'company_id' => '3',
                 'redirect_url' => $response,
                 'image_url' => $img,

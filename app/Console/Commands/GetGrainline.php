@@ -43,14 +43,17 @@ class GetGrainline extends Command
      */
     public function handle()
     {
+        $this->info("Inserting company into db.");
+        $company = ['id' => '2', 'name' => 'Grainline Studio'];
+        $dbCompany = Company::findOrNew($company['id']);
+        $dbCompany->fill($company)->save();
 
         try {
             $client = new Client();
             $res = $client->request('GET', "https://grainlinestudio.com/shop/");
             $this->grainlineScraper($res->getBody()->getContents());
-            $statusCode = $res->getStatusCode();
         } catch (RequestException $e) {
-            $statusCode = $e->getResponse()->getStatusCode();
+            return $e;
         }
         $this->info("DONE");
     }
@@ -64,14 +67,6 @@ class GetGrainline extends Command
         $queryPath = QueryPath::withHTML($response);
         foreach ($queryPath->find('.product-title-link') as $name) {
             $name = $name->text();
-            /*
-             * the below code was to remove pattern duplicates, i.e. the same pattern in PDF and Paper format
-             * Turns out it will probably be easier to remove each version of the same product
-             *  after the final array is constructed, and we have the links paired with the correct name etc.
-             *
-             * */
-            //$name = stristr($name,' – ', true);
-            //$name = trim($name);
 
             /* Adds all product to array, except gift certificate
              * */
@@ -86,7 +81,6 @@ class GetGrainline extends Command
                 $names[] = $name;
             }
         }
-        //$names = array_unique(array_filter($names));
 
         $this->info("Scraping prices...");
         $prices = [];
@@ -108,10 +102,10 @@ class GetGrainline extends Command
         $ids = [];
         foreach ($queryPath->find('.ajax_add_to_cart') as $product) {
             $id = $product->attr('data-product_id');
-            // Check for product ID 21321, which is a giftcard, not a pattern
+            // Check for product ID 21321, giftcard
             if (stristr($id, '21321') === false) {
                 $id = "2-" . $id; // Adds company ID in front of company pattern ID
-                // Also need to add company ID into company database later...
+                // Also need to add company ID into company db...
                 $ids[] = $id;
             }
         }
@@ -152,29 +146,10 @@ class GetGrainline extends Command
             $this->info("Adding language...");
             $language = "English";
 
-            /*
-             * Ask Marcus:
-             *  Problem with characters for patterns with name
-             *  LAHJA DRESSING GOWN ? WOMEN´S / LAHJA DRESSING GOWN - WOMEN´S
-             *  LAHJA DRESSING GOWN ? MEN´S / LAHJA DRESSING GOWN - MEN´S
-             *
-             *
-                        $this->info("Reading category...");
-                        // lastWord() function moved to scraper class, so call it like so Scraper::lastWord instead !!!!!!
-                        $category = lastWord($value->textContent);
-                        $category = strtolower($category);
-                        $category = ['name' => $category];
-                        $this->info("Inserting category into db.");
-                        $dbCategory = Category::findOrNew($category['name']);
-                        $dbCategory->fill($category)->save();
-                        //$category_id = $dbCategory->id;
-            */
-
             $patterns[$key] = [
                 'name' => $value,
                 'price' => $price,
-                //'category_id' => $category_id,
-                'company_id' => '1', // change this later on
+                'company_id' => '1',
                 'redirect_url' => $response,
                 'image_url' => $image,
                 'company_pattern_id' => $pattern_id,
@@ -188,7 +163,6 @@ class GetGrainline extends Command
         $this->info("Looping for insert...");
         foreach ($patterns as $pattern) {
             $this->info("Inserting/updating: " . $pattern['name']);
-            // is findOrNew the best method here??
             $dbPattern = Pattern::findOrNew($pattern['name']);
             $dbPattern->fill($pattern)->save();
         }

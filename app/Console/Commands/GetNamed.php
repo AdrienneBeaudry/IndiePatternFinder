@@ -11,12 +11,6 @@ use GuzzleHttp\Exception\RequestException;
 use Illuminate\Console\Command;
 use QueryPath;
 
-// !!!!!WARNING!!!!
-//the below can be removed when done coding. This is to see the full content of long strings for debugging purposes
-ini_set("xdebug.var_display_max_children", -1);
-ini_set("xdebug.var_display_max_data", -1);
-ini_set("xdebug.var_display_max_depth", -1);
-
 class GetNamed extends Command
 {
     /**
@@ -135,29 +129,10 @@ class GetNamed extends Command
             $this->info("Reading language...");
             $language = Scraper::readLanguage($string);
 
-/*
- * Ask Marcus:
- * Problem with characters for patterns with name
- *  LAHJA DRESSING GOWN ? WOMEN´S / LAHJA DRESSING GOWN - WOMEN´S
- *  LAHJA DRESSING GOWN ? MEN´S / LAHJA DRESSING GOWN - MEN´S
- *
- *
-            $this->info("Reading category...");
-            // lastWord() function moved to scraper class, so call it like so Scraper::lastWord instead !!!!!!
-            $category = lastWord($value->textContent);
-            $category = strtolower($category);
-            $category = ['name' => $category];
-            $this->info("Inserting category into db.");
-            $dbCategory = Category::findOrNew($category['name']);
-            $dbCategory->fill($category)->save();
-            //$category_id = $dbCategory->id;
-*/
-
             $patterns[$key] = [
                 'name' => $value->textContent,
                 'price' => $price->textContent,
-                //'category_id' => $category_id,
-                'company_id' => '1', // change this later on
+                'company_id' => '1',
                 'redirect_url' => $response,
                 'image_url' => $image,
                 'company_pattern_id' => $product_id,
@@ -171,7 +146,6 @@ class GetNamed extends Command
         $this->info("Looping for insert...");
         foreach ($patterns as $pattern) {
             $this->info("Inserting/updating: " . $pattern['name']);
-            // is findOrNew the best method here??
             $dbPattern = Pattern::findOrNew($pattern['name']);
             $dbPattern->fill($pattern)->save();
         }
