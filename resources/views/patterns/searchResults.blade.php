@@ -34,7 +34,7 @@
                                 <img src="{{ $value->image_url }}" class="pattern-img-pauline-1">
                     @endif
                         </a>
-                        <button class="pattern-label"><strong>Designer #{{ $value->company_id }} </strong>
+                        <button class="pattern-label"><strong>{{ $value->company_name }} </strong>
                             <br> <span class="pattern-name">{{ $value->name }}</span><br> {{ $value->price }}</button>
                     </div>
                 </li>
