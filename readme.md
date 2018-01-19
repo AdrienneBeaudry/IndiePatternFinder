@@ -2,11 +2,13 @@
 
 A search engine for independent sewing patterns, which allows to search through thousands of patterns 
 instead of forcing users to visit each web shop individually. There are, in January 2018, 500+ independent
-sewing-pattern designers.
+sewing-pattern designers. This project was developed as the final requirement for the completion of the
+[Web Developer for e-Commerce](http://medieinstitutet.se/webbutvecklare-ehandel/) programme of study
+at [Medieinstutet](http://medieinstitutet.se/) in Gothenburg.
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development 
+These instructions will get you the project up and running on your local machine for development 
 and testing purposes.
 
 ### Prerequisites
@@ -19,7 +21,6 @@ PHP 5.3.2+
 Google Chrome version 63.0.3239 - or comparable
 Composer
 Laravel 5.5
-
 
 ```
 
@@ -68,46 +69,22 @@ Install IDE helper in project
 ```
 composer require barryvdh/laravel-ide-helper
 ```
-You should now be able to use the application on your local host by visiting the designated URL in your browser.
-## Running the tests
+You should now be able to use the application on your localhost via browser.
 
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - Laravel
-* [Maven](https://maven.apache.org/) - QueryPath
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+* [Laravel](https://laravel.com/) - Laravel
+* [QueryPath](https://github.com/technosophos/querypath) - QueryPath
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+Contributions welcome! Suggestions and requests from non-coding contributors would be appreciated at this stage.
 
 ## Authors
 
-* **Adrienne Beaudry** - *Initial work* - [GitHub](https://linkedin/in/AdrienneBeaudry)/[BitBucket](https://linkedin/in/AdrienneBeaudry)/[LinkedIn](https://linkedin/in/AdrienneBeaudry)
+* **Adrienne Beaudry** - *Initial work* - [GitHub](https://github.com/AdrienneBeaudry)/[BitBucket](https://bitbucket.org/AdrienneBeaudry/)/[LinkedIn](https://linkedin/in/AdrienneBeaudry)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
 ## License
 
@@ -115,6 +92,5 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
+* Thank you to Marcus Dalgren, advisor for this project, for his continuous guidance and feedback
+* Thank you to all other developers at Raket Web Agency for ideas
