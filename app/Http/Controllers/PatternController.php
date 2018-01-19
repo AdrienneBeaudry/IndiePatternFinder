@@ -11,7 +11,10 @@ class PatternController extends Controller
     public function index(Request $request)
     {
         $query = trim($request->query('query'));
-        $patterns = ($query != "") ? $this->searchPatterns($query) : DB::table('patterns')->get();
+        $patterns = ($query != "") ? $this->searchPatterns($query) :
+            DB::table('patterns')
+                ->join('companies', 'patterns.company_id', '=', 'companies.id')
+                ->get();
 
         return view('welcome', ['patterns' => $patterns, 'query' => $query]);
     }

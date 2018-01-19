@@ -6,6 +6,7 @@
     @endif
 
     @foreach($patterns as $key => $value)
+
                 <li class="pattern">
                     {{-- Default --}}
                     @if($value->company_id !== 3)
