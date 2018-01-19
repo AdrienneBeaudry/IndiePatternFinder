@@ -1,37 +1,74 @@
 # INDIE PATTERN FINDER
 
-One Paragraph of project description goes here
+A search engine for independent sewing patterns, which allows to search through thousands of patterns 
+instead of forcing users to visit each web shop individually. There are, in January 2018, 500+ independent
+sewing-pattern designers.
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development 
+and testing purposes.
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
+Requires the following:
 
 ```
-Give examples
+MAMP or XAMPP
+PHP 5.3.2+
+Google Chrome version 63.0.3239 - or comparable
+Composer
+Laravel 5.5
+
+
 ```
 
 ### Installing
 
-A step by step series of examples that tell you have to get a development env running
-
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
+How to set up an environment for development and testing:
+1) Clone repository
 
 ```
-until finished
+https://AdrienneBeaudry@bitbucket.org/AdrienneBeaudry/indiepatternfinder.git
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
+2) Setup new laravel project via Composer
 
+```
+composer create-project laravel/laravel
+
+```
+
+3) Install following packages:
+
+```
+composer require querypath/querypath
+composer require guzzlehttp/guzzle
+composer require barryvdh/laravel-ide-helper
+```
+
+4) Connect project with database (see .env.example file)
+
+
+5) Run migrations:
+
+```
+php artisan migrate
+```
+6) Run commands successively:
+
+```
+php artisan get:named
+php artisan get:grainline
+php artisan get:pauline
+```
+
+Install IDE helper in project
+
+```
+composer require barryvdh/laravel-ide-helper
+```
+You should now be able to use the application on your local host by visiting the designated URL in your browser.
 ## Running the tests
 
 Explain how to run the automated tests for this system
@@ -52,14 +89,10 @@ Explain what these tests test and why
 Give an example
 ```
 
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
+* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - Laravel
+* [Maven](https://maven.apache.org/) - QueryPath
 * [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
 
 ## Contributing
@@ -72,7 +105,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Adrienne Beaudry** - *Initial work* - [GitHub](https://linkedin/in/AdrienneBeaudry)/[BitBucket](https://linkedin/in/AdrienneBeaudry)/[LinkedIn](https://linkedin/in/AdrienneBeaudry)
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
