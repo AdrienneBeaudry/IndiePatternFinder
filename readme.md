@@ -56,21 +56,14 @@ composer require barryvdh/laravel-ide-helper
 ```
 php artisan migrate
 ```
-6) Run commands successively:
+6) Run commands:
 
 ```
 php artisan get:named
 php artisan get:grainline
 php artisan get:pauline
 ```
-
-Install IDE helper in project
-
-```
-composer require barryvdh/laravel-ide-helper
-```
-You should now be able to use the application on your localhost via browser.
-
+Application now ready to use.
 
 ## Built With
 
