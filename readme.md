@@ -1,9 +1,9 @@
 # INDIE PATTERN FINDER
 
 A search engine for independent sewing patterns. As of January 2018, there are 500+ independent
-sewing-pattern designers, but no single platform to search them all. 
+sewing-pattern designers, but no single platform to search them all. I built scrapers that scanned the web and collected data, later rendered searchable on my platform. 
 
-I built scrapers that scanned the web and collected data, later rendered searchable on my platform. The scope for the project was to create a minimal viable product.
+The scope for the project was to create a minimal viable product.
 
 This project was developed as the final requirement for the completion of the
 [Web Developer for e-Commerce](http://medieinstitutet.se/webbutvecklare-ehandel/) programme of study
@@ -31,10 +31,6 @@ Laravel 5.5
 
 How to set up an environment for development and testing:
 1) Clone repository
-
-```
-https://AdrienneBeaudry@bitbucket.org/AdrienneBeaudry/indiepatternfinder.git
-```
 
 2) Setup new laravel project via Composer
 
