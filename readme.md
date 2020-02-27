@@ -1,8 +1,11 @@
 # INDIE PATTERN FINDER
 
-A search engine for independent sewing patterns, which allows to search through thousands of patterns 
-instead of forcing users to visit each web shop individually. There are, in January 2018, 500+ independent
-sewing-pattern designers. This project was developed as the final requirement for the completion of the
+A search engine for independent sewing patterns. As of January 2018, there are 500+ independent
+sewing-pattern designers, but no single platform to search them all. 
+
+I built scrapers that scanned the web and collected data, later rendered searchable on my platform. The scope for the project was to create a minimal viable product.
+
+This project was developed as the final requirement for the completion of the
 [Web Developer for e-Commerce](http://medieinstitutet.se/webbutvecklare-ehandel/) programme of study
 at [Medieinstutet](http://medieinstitutet.se/) in Gothenburg.
 
